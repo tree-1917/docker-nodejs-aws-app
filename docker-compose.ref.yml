@@ -1,0 +1,12 @@
+version: "3"
+services:
+  node-app:
+    container_name: node-app-dev
+    build: .
+    volumes:
+      - ./src:/app/src:ro
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./.env
+    

@@ -1,0 +1,73 @@
+# ========================== #
+# === docker-compose.yml === #
+# ========================== #
+
+# services:
+services:
+  node-app:
+    container_name: node-app-dev
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+      - redis
+  # mongo:
+  #   container_name: mongo-dev
+  #   image: mongo
+  #   restart: always
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo-db:/data/db
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #     MONGO_INITDB_DATABASE: mydatabase
+  # mongo-express:
+  # image: mongo-express
+  # restart: always
+  # ports:
+  #   - 8081:8081
+  # environment:
+  #   ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #   ME_CONFIG_MONGODB_ADMINPASSWORD: example
+  #   ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+  #   ME_CONFIG_BASICAUTH: false
+  # depends_on:
+  #   - mongo
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass example
+    volumes:
+      - redis-db:/data
+  nginx:
+    image: nginx:stable-alpine
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - node-app
+  postgres:
+    container_name: postgres-dev
+    image: postgres
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: example
+
+# volumes:
+volumes:
+  mongo-db:
+  redis-db:
+  postgres-db:
